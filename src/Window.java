@@ -5,10 +5,11 @@ public class Window extends Canvas {
 
     private int WIDTHWINDOW;
     private int HEIGHTWINDOW;
+    private JFrame frame;
 
     public Window(String title, Game game){
         //create frame
-        JFrame frame = new JFrame(title);
+        frame = new JFrame(title);
 
         //get the screensize
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -37,5 +38,9 @@ public class Window extends Canvas {
 
     public int getHEIGHTWINDOW() {
         return HEIGHTWINDOW;
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 }
