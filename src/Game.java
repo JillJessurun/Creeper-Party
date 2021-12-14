@@ -4,14 +4,27 @@ import java.io.IOException;
 
 public class Game extends Canvas implements Runnable {
 
-    public static final int WIDTH = 1000;
-    public static final int HEIGHT = 1000;
+    public static int WIDTH;
+    public static int HEIGHT;
 
     private Thread thread;
-    private boolean running = false;
+    private boolean running = true;
+    private Handler handler;
+    private HUD hud;
 
     public Game(){
-        new Window(WIDTH, HEIGHT, "Creeper Party", this);
+        Window window = new Window("Creeper Party", this);
+        WIDTH = window.getWIDTHWINDOW();
+        HEIGHT = window.getHEIGHTWINDOW();
+
+        handler = new Handler();
+        this.addKeyListener(new KeyInput(handler));
+
+        hud = new HUD();
+
+        handler.addObject(new Player(WIDTH/2-32, HEIGHT/2-32, ID.Player, handler));
+        handler.addObject(new Player(WIDTH/2-32, HEIGHT/2-32, ID.Player2, handler));
+        handler.addObject(new Enemy(WIDTH/2-32, HEIGHT/2-32, ID.Enemy, handler));
     }
 
     public synchronized void start(){
@@ -59,7 +72,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void tick(){
-
+        handler.tick();
+        hud.tick();
     }
 
     private void render(){
@@ -74,8 +88,22 @@ public class Game extends Canvas implements Runnable {
         g.setColor(Color.black);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
+        handler.render(g);
+        hud.render(g);
+
         g.dispose();
         bs.show();
+    }
+
+    //clamp method: if the var is at the max, it stays at the max (same with the min)
+    public static float clamp(float var, float min, float max){
+        if(var >= max){
+            return var = max;
+        }else if(var <= min){
+            return var = min;
+        }else{
+            return var;
+        }
     }
 
     public static void main(String[] args) {
