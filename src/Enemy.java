@@ -1,17 +1,26 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class Enemy extends GameObject{
     private Handler handler;
+    private Menu menu;
+    Random r = new Random();
+    public static BufferedImage image;
+    private BufferedImage creeperEnemy;
 
-    public Enemy(float x, float y, ID id, Handler handler) {
+    public Enemy(float x, float y, ID id, Handler handler, Menu menu, BufferedImage image, BufferedImage creeperEnemy) {
         super(x, y, id);
         this.handler = handler;
-        velX = 4;
-        velY = 2;
+        this.menu = menu;
+        this.image = image;
+        this.creeperEnemy = creeperEnemy;
+        velX = (float) r.nextDouble(2, 5);
+        velY = (float) r.nextDouble(2, 5);
     }
 
     public Rectangle getBounds() {
-        return new Rectangle((int) x, (int) y, 16, 16);
+        return new Rectangle((int) x, (int) y, 40, 40);
     }
 
     public void tick() {
@@ -29,7 +38,9 @@ public class Enemy extends GameObject{
     }
 
     public void render(Graphics g) {
-        g.setColor(Color.red);
-        g.fillRect((int) x, (int) y, 16, 16);
+        //g.setColor(Color.red);
+        //g.fillRect((int) x, (int) y, 16, 16);
+
+        g.drawImage(creeperEnemy, (int)x, (int)y, null);
     }
 }

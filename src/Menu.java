@@ -1,8 +1,10 @@
+import javax.sound.sampled.Port;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -17,12 +19,16 @@ public class Menu extends MouseAdapter {
     private int countLetter3;
     private int countLetter4;
     private int countLetter5;
+    private BufferedImage creeperPlayer;
+    private BufferedImage netherPortal;
+    private HUDgames huDgames;
 
-    public Menu(Game game, Handler handler, HUD hud, JFrame jFrame){
+    public Menu(Game game, Handler handler, BufferedImage creeperPlayer, BufferedImage netherPortal, HUDgames huDgames){
         this.game = game;
         this.handler = handler;
-        this.hud = hud;
-        this.jFrame = jFrame;
+        this.creeperPlayer = creeperPlayer;
+        this.netherPortal = netherPortal;
+        this.huDgames = huDgames;
     }
     
     public int countLetters(String string){
@@ -38,24 +44,46 @@ public class Menu extends MouseAdapter {
         int my = e.getY();
 
         //quit button home
-        if (mouseOver(mx, my, (Game.WIDTH/2)-170, (Game.HEIGHT/2)+250, 350, 100) && game.gameState == Game.STATE.Menu){
+        if (mouseOver(mx, my, (Game.WIDTH/2), (Game.HEIGHT/2)+250, 350, 100) && game.gameState == Game.STATE.Menu){
+            handler.clearEnemies();
             System.exit(0);
         }
 
         //options button home
-        if (mouseOver(mx, my, (Game.WIDTH/2)-170, (Game.HEIGHT/2) + 75, 350, 100) && game.gameState == Game.STATE.Menu){
+        if (mouseOver(mx, my, (Game.WIDTH/2), (Game.HEIGHT/2) + 75, 350, 100) && game.gameState == Game.STATE.Menu){
+            handler.clearEnemies();
             game.gameState = Game.STATE.Options;
         }
 
-        //quit button options
-        if (mouseOver(mx, my, (Game.WIDTH/2)-170, (Game.HEIGHT/2)+250, 350, 100) && game.gameState == Game.STATE.Options){
+        //back button options
+        if (mouseOver(mx, my, (Game.WIDTH/2), (Game.HEIGHT/2)+250, 350, 100) && game.gameState == Game.STATE.Options){
+            try {
+                game.specialEffect();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             game.gameState = Game.STATE.Menu;
         }
 
         //play button home
-        if (mouseOver(mx, my, (Game.WIDTH/2)-170, (Game.HEIGHT/2)-100, 350, 100) && game.gameState == Game.STATE.Menu){
+        if (mouseOver(mx, my, (Game.WIDTH/2), (Game.HEIGHT/2)-100, 350, 100) && game.gameState == Game.STATE.Menu){
+            handler.clearEnemies();
+            handler.addObject(new Player(Game.WIDTH/2-32, Game.HEIGHT/2-32, ID.Player, handler, this, creeperPlayer, game, huDgames));
+
+            handler.addObject(new Portal(0, 0, ID.Portal, netherPortal));
+
+            game.gameState = Game.STATE.Lobby;
+        }
+
+        /*
+        //play button home
+        if (mouseOver(mx, my, (Game.WIDTH/2), (Game.HEIGHT/2)-100, 350, 100) && game.gameState == Game.STATE.Menu){
+            handler.clearEnemies();
+            handler.addObject(new Player(Game.WIDTH/2-32, Game.HEIGHT/2-32, ID.Player, handler, this, image, creeperPlayer));
             game.gameState = Game.STATE.Play;
         }
+
+         */
     }
 
     private boolean mouseOver(int mx, int my, int x, int y, int width, int height){
@@ -86,7 +114,8 @@ public class Menu extends MouseAdapter {
         ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\pc\\IdeaProjects\\Creeper-Party\\src\\Font\\minecraft.ttf")));
 
         //custom color
-        Color customColor = new Color(0,105,35);
+        Color ColorDarkGreen = new Color(36, 197, 0);
+        Color ColorLightGreen = new Color(216,255,203);
 
         //buttons menu draw
         //g.drawRect((Game.WIDTH/2)-countLetter*8, (Game.HEIGHT/2), 350, 100);
@@ -104,48 +133,43 @@ public class Menu extends MouseAdapter {
             this.countLetter = this.countLetters(title);
 
             g.setFont(minecraftFont);
-            g.setColor(customColor);
+            g.setColor(ColorDarkGreen);
             g.drawString(title, (Game.WIDTH/2)-this.countLetter*33, 160);
-
-            //display background
-            
-
-
 
             //buttons setup
             g.setFont(font2);
-            g.setColor(Color.white);
+            g.setColor(ColorLightGreen);
 
             //Game.WIDTH/2)-this.countLetter*11 ==== 784
 
             //button play
             String playTest = "Play";
             this.countLetter2 = this.countLetters(playTest);
-            g.drawRect((Game.WIDTH/2)-170, (Game.HEIGHT/2)-100, 350, 100);
-            g.drawString(playTest, (Game.WIDTH/2)-this.countLetter2*8, (Game.HEIGHT/2)-50);
+            g.drawRect((Game.WIDTH/2), (Game.HEIGHT/2)-100, 350, 100);
+            g.drawString(playTest, (Game.WIDTH/2)+this.countLetter2*35, (Game.HEIGHT/2)-50);
 
             //button options
             String optionsTest = "Options";
             this.countLetter4 = this.countLetters(optionsTest);
-            g.drawRect((Game.WIDTH/2)-170, (Game.HEIGHT/2) + 75, 350, 100);
-            g.drawString(optionsTest, (Game.WIDTH/2)-this.countLetter4*8, (Game.HEIGHT/2)+130);
+            g.drawRect((Game.WIDTH/2), (Game.HEIGHT/2) + 75, 350, 100);
+            g.drawString(optionsTest, (Game.WIDTH/2)+this.countLetter2*29, (Game.HEIGHT/2)+130);
 
             //button quit
             String quit = "Quit game";
             this.countLetter3 = this.countLetters(quit);
-            g.drawRect((Game.WIDTH/2)-170, (Game.HEIGHT/2)+250, 350, 100);
-            g.drawString(quit, (Game.WIDTH/2)-this.countLetter3*8, (Game.HEIGHT/2)+305);
+            g.drawRect((Game.WIDTH/2), (Game.HEIGHT/2)+250, 350, 100);
+            g.drawString(quit, (Game.WIDTH/2)+this.countLetter2*26, (Game.HEIGHT/2)+305);
 
         }else if(game.gameState == Game.STATE.Options){
             //buttons setup
             g.setFont(font2);
-            g.setColor(Color.white);
+            g.setColor(ColorLightGreen);
 
             //button back
             String quit = "Back";
             this.countLetter5 = this.countLetters(quit);
-            g.drawRect((Game.WIDTH/2)-170, (Game.HEIGHT/2)+250, 350, 100);
-            g.drawString(quit, (Game.WIDTH/2)-this.countLetter5*8, (Game.HEIGHT/2)+305);
+            g.drawRect((Game.WIDTH/2), (Game.HEIGHT/2)+250, 350, 100);
+            g.drawString(quit, (Game.WIDTH/2)+this.countLetter5*35, (Game.HEIGHT/2)+305);
         }
     }
 

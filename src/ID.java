@@ -4,5 +4,7 @@ public enum ID {
 
     Player(),
     Player2(),
+    Backgroundeffect(),
+    Portal(),
     Enemy();
 }

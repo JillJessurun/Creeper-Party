@@ -1,16 +1,26 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Player extends GameObject{
 
     private Handler handler;
+    private Menu menu;
+    private BufferedImage creeperPlayer;
+    private Game game;
+    private HUDgames huDgames;
 
-    public Player(float x, float y, ID id, Handler handler) {
+    public Player(float x, float y, ID id, Handler handler, Menu menu, BufferedImage creeperPlayer, Game game, HUDgames huDgames) {
         super(x, y, id);
         this.handler = handler;
+        this.menu = menu;
+        this.game = game;
+        //this.image = image;
+        this.creeperPlayer = creeperPlayer;
+        this.huDgames = huDgames;
     }
 
     public Rectangle getBounds(){
-        return new Rectangle ((int)x, (int)y, 32, 32);
+        return new Rectangle ((int)x, (int)y, 50, 50);
     }
 
     public void tick() {
@@ -22,8 +32,8 @@ public class Player extends GameObject{
         y = y + velY;
         y = y + velY;
 
-        x = Game.clamp(x, 0, Game.WIDTH-50);
-        y = Game.clamp(y, 0, Game.HEIGHT-50);
+        x = Game.clamp(x, 0, Game.WIDTH-60);
+        y = Game.clamp(y, 0, Game.HEIGHT-60);
 
         collision();
     }
@@ -37,18 +47,29 @@ public class Player extends GameObject{
                         //collision code (under here happens when colliding)
                         HUD.HEALTH -= 2;
                     }
+                }else if (tempObject.getId() == ID.Portal) {
+                    if (getBounds().intersects(tempObject.getBounds())) {
+                        //collision code with portal
+                        huDgames.setInPortal(true);
+                        game.gameState = Game.STATE.HUDminigames;
+
+                        //handler.clearEnemies();
+                        //game.gameState = Game.STATE.DodgeGame;
+                    }else{
+                        huDgames.setInPortal(false);
+                        game.gameState = Game.STATE.Lobby;
+                    }
                 }
             }
         }
     }
 
     public void render(Graphics g) {
-        if (this.getId() == ID.Player) {
-            g.setColor(Color.red);
-            g.fillRect((int) x, (int) y, 32, 32);
-        }else if (this.getId() == ID.Player2) {
-            g.setColor(Color.green);
-            g.fillRect((int) x + 100, (int) y, 32, 32);
-        }
+
+        //g.setColor(Color.red);
+        //g.fillRect((int) x, (int) y, 32, 32);
+
+        g.drawImage(creeperPlayer, (int)x, (int)y, null);
+
     }
 }

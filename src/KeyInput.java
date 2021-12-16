@@ -5,9 +5,11 @@ public class KeyInput extends KeyAdapter {
 
     private Handler handler;
     private boolean[] keyDown = new boolean[4];
+    private Menu menu;
 
-    public KeyInput(Handler handler){
+    public KeyInput(Handler handler, Menu menu){
         this.handler = handler;
+        this.menu = menu;
         keyDown[0] = false;
         keyDown[1] = false;
         keyDown[2] = false;
